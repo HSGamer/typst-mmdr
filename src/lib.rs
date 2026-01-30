@@ -1,6 +1,7 @@
 use wasm_minimal_protocol::*;
 use mermaid_rs_renderer::{render_with_options, RenderOptions, Theme, LayoutConfig};
 use serde::{de::DeserializeOwned, Serialize};
+use json_value_merge::Merge;
 
 initiate_protocol!();
 
@@ -11,46 +12,51 @@ pub fn mermaid(
     theme: &[u8],
     layout: &[u8]
 ) -> Result<Vec<u8>, String> {
-    let code_str = std::str::from_utf8(code).map_err(|e| e.to_string())?;
-    let base_theme_str = std::str::from_utf8(base_theme).map_err(|e| e.to_string())?;
+    let code_str = bytes_to_str(code)?;
+    let base_theme_str = bytes_to_str(base_theme)?;
     
     let mut options = RenderOptions {
-        theme: match base_theme_str {
-            "default" => Theme::mermaid_default(),
-            _ => Theme::modern(),
-        },
+        theme: get_base_theme(base_theme_str),
         layout: LayoutConfig::default(),
     };
 
-    merge_json(&mut options.theme, theme)?;
-    merge_json(&mut options.layout, layout)?;
+    apply_overrides(&mut options.theme, theme)?;
+    apply_overrides(&mut options.layout, layout)?;
 
-    match render_with_options(code_str, options) {
-        Ok(svg) => Ok(svg.into_bytes()),
-        Err(e) => Err(format!("Mermaid rendering error: {:?}", e)),
+    render_with_options(code_str, options)
+        .map(|svg| svg.into_bytes())
+        .map_err(|e| format!("Mermaid rendering error: {:?}", e))
+}
+
+/// Helper to convert bytes to UTF-8 string slice
+fn bytes_to_str(bytes: &[u8]) -> Result<&str, String> {
+    std::str::from_utf8(bytes).map_err(|e| e.to_string())
+}
+
+/// Selects the base theme based on the input string
+fn get_base_theme(name: &str) -> Theme {
+    match name {
+        "default" => Theme::mermaid_default(),
+        _ => Theme::modern(),
     }
 }
 
-fn merge_json<T: Serialize + DeserializeOwned>(target: &mut T, json: &[u8]) -> Result<(), String> {
+/// Merges a JSON byte slice into a target struct
+fn apply_overrides<T: Serialize + DeserializeOwned>(target: &mut T, json: &[u8]) -> Result<(), String> {
     if json.is_empty() {
         return Ok(());
     }
+    
+    // 1. Serialize target to a Value
     let mut target_val = serde_json::to_value(&target).map_err(|e| e.to_string())?;
+    
+    // 2. Parse overrides to a Value
     let json_val: serde_json::Value = serde_json::from_slice(json).map_err(|e| e.to_string())?;
 
-    merge(&mut target_val, json_val);
+    // 3. Merge overrides into target
+    target_val.merge(&json_val);
     
+    // 4. Deserialize back to the target struct
     *target = serde_json::from_value(target_val).map_err(|e| e.to_string())?;
     Ok(())
-}
-
-fn merge(a: &mut serde_json::Value, b: serde_json::Value) {
-    match (a, b) {
-        (serde_json::Value::Object(a), serde_json::Value::Object(b)) => {
-            for (k, v) in b {
-                merge(a.entry(k).or_insert(serde_json::Value::Null), v);
-            }
-        }
-        (a, b) => *a = b,
-    }
 }
