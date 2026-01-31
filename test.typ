@@ -36,7 +36,15 @@ flowchart TB
 
 ```mermaid
 sequenceDiagram
-    Alice ->> John: Hello John, how are you?
-    John -->> Alice: Great!
-    Alice ->> John: See you later!
+    participant Client
+    participant Server
+    participant Database
+    Client->>Server: Request
+    Server->>Database: Query
+    Database-->>Server: Results
+    Server-->>Client: Response
+    Client->>Server: Update
+    Server->>Database: Write
+    Database-->>Server: Confirm
+    Server-->>Client: Success
 ```
