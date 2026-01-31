@@ -1,12 +1,12 @@
 #let plugin-wasm = plugin("target/wasm32-unknown-unknown/release/typst_mmdr.wasm")
 
-#let mermaid(
+#let mermaid-svg(
   code,
   base-theme: "modern",
   theme: none,
   layout: none,
 ) = {
-  let svg-bytes = plugin-wasm.mermaid(
+  let svg-bytes = plugin-wasm.render(
     bytes(code),
     bytes(base-theme),
     bytes(
@@ -24,5 +24,20 @@
       },
     ),
   )
-  image(svg-bytes)
+  str(svg-bytes)
+}
+
+#let mermaid(
+  code,
+  base-theme: "modern",
+  theme: none,
+  layout: none,
+) = {
+  let svg-str = mermaid-svg(
+    code,
+    base-theme: base-theme,
+    theme: theme,
+    layout: layout,
+  )
+  image(bytes(svg-str), format: "svg")
 }

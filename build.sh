@@ -7,7 +7,7 @@ cargo build --release --target wasm32-unknown-unknown
 
 # Prepare distribution folder
 VERSION=$(grep '^version' typst.toml | cut -d'"' -f2)
-DIST_DIR="dist/typst-mmdr/$VERSION"
+DIST_DIR="dist/$VERSION"
 mkdir -p "$DIST_DIR"
 
 echo "Copying files to $DIST_DIR..."

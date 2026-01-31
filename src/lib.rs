@@ -6,7 +6,7 @@ use json_value_merge::Merge;
 initiate_protocol!();
 
 #[wasm_func]
-pub fn mermaid(
+pub fn render(
     code: &[u8],
     base_theme: &[u8],
     theme: &[u8],
