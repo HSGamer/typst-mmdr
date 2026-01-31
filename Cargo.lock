@@ -169,7 +169,7 @@ dependencies = [
 [[package]]
 name = "mermaid-rs-renderer"
 version = "0.1.2"
-source = "git+https://github.com/1jehuang/mermaid-rs-renderer#6e75a10eeaf61a83d267e9ea021bac257411f0d8"
+source = "git+https://github.com/HSGamer/mermaid-rs-renderer?branch=next#d26144adeeb6ee467dd649e4539a7f526aaaa07c"
 dependencies = [
  "anyhow",
  "dagre_rust",
