@@ -14,6 +14,9 @@ Import the package and use the `mermaid` function:
 #mermaid("graph TD; A-->B;")
 ```
 
+More examples can be found
+[here](https://github.com/HSGamer/typst-mmdr/blob/master/test.typ)
+
 ### Options
 
 You can customize the appearance using `base-theme`, `theme`, and `layout`
