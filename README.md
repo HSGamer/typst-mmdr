@@ -6,16 +6,21 @@ diagrams using
 
 ## Limitation
 
-This doesn't guarantee to support all features of [Mermaid JS](https://mermaid.js.org/), as [mermaid-rs-renderer](https://github.com/1jehuang/mermaid-rs-renderer) currently does not support all of the features. 
+This doesn't guarantee to support all features of
+[Mermaid JS](https://mermaid.js.org/), as
+[mermaid-rs-renderer](https://github.com/1jehuang/mermaid-rs-renderer) currently
+does not support all of the features.
 
-Any problem with the render of the diagram must be reported to [mermaid-rs-renderer](https://github.com/1jehuang/mermaid-rs-renderer) instead of here. 
+Any problem with the render of the diagram must be reported to
+[mermaid-rs-renderer](https://github.com/1jehuang/mermaid-rs-renderer) instead
+of here.
 
 ## Usage
 
 Import the package and use the `mermaid` function:
 
 ```typst
-#import "@preview/mmdr:0.1.0": mermaid
+#import "@preview/mmdr:0.2.0": mermaid
 
 #mermaid("graph TD; A-->B;")
 ```
@@ -56,7 +61,7 @@ parameters.
 If you need the raw SVG string instead of a Typst image, use `mermaid-svg`:
 
 ```typst
-#import "@preview/mmdr:0.1.0": mermaid-svg
+#import "@preview/mmdr:0.2.0": mermaid-svg
 
 #let svg-code = mermaid-svg("graph TD; A-->B;")
 ```
