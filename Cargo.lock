@@ -159,7 +159,6 @@ dependencies = [
 [[package]]
 name = "mermaid-rs-renderer"
 version = "0.2.0"
-source = "git+https://github.com/HSGamer/mermaid-rs-renderer?branch=next#04c6a5204d8e6424f6b0207b064567a8909ee627"
 dependencies = [
  "anyhow",
  "fontdb",

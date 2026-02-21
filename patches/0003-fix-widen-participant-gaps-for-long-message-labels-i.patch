@@ -1,0 +1,102 @@
+From 81cad20ddfc6b447d9450dbd1106fab2b0cc7713 Mon Sep 17 00:00:00 2001
+From: hsgamer <huynhqtienvtag@gmail.com>
+Date: Sat, 21 Feb 2026 18:13:45 +0700
+Subject: [PATCH 3/3] fix: widen participant gaps for long message labels in
+ sequence diagrams
+
+---
+ src/layout/sequence.rs | 68 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 2 deletions(-)
+
+diff --git a/src/layout/sequence.rs b/src/layout/sequence.rs
+index 55e1819..2a9c32a 100644
+--- a/src/layout/sequence.rs
++++ b/src/layout/sequence.rs
+@@ -70,10 +70,68 @@ pub(super) fn compute_sequence_layout(
+         actor_gap *= 0.8;
+     }
+ 
++    // Compute per-pair minimum gaps from message label widths so that long
++    // labels don't overflow between lifelines.
++    let participant_index: HashMap<String, usize> = participants
++        .iter()
++        .enumerate()
++        .map(|(i, id)| (id.clone(), i))
++        .collect();
++    let mut pair_min_gap: HashMap<(usize, usize), f32> = HashMap::new();
++    let label_pad = theme.font_size * 1.2;
++    for edge in &graph.edges {
++        let labels = [&edge.label, &edge.start_label, &edge.end_label];
++        let mut max_label_w = 0.0f32;
++        for label_opt in &labels {
++            if let Some(label) = label_opt {
++                let block = measure_label(label, theme, config);
++                max_label_w = max_label_w.max(block.width);
++            }
++        }
++        if max_label_w <= 0.0 {
++            continue;
++        }
++        let Some(&from_idx) = participant_index.get(&edge.from) else {
++            continue;
++        };
++        let Some(&to_idx) = participant_index.get(&edge.to) else {
++            continue;
++        };
++        if from_idx == to_idx {
++            continue;
++        }
++        // The label needs to fit between the two lifelines (center of each participant).
++        // Sum up the half-widths of all participants between from and to (inclusive endpoints).
++        let lo = from_idx.min(to_idx);
++        let hi = from_idx.max(to_idx);
++        let from_half = participant_widths
++            .get(&participants[lo])
++            .copied()
++            .unwrap_or(min_actor_width)
++            / 2.0;
++        let to_half = participant_widths
++            .get(&participants[hi])
++            .copied()
++            .unwrap_or(min_actor_width)
++            / 2.0;
++        // For non-adjacent participants, the label spans multiple gaps;
++        // only enforce the minimum when the pair is adjacent (distance=1).
++        let span = hi - lo;
++        if span != 1 {
++            continue;
++        }
++        let needed_gap = (max_label_w + label_pad) - from_half - to_half;
++        if needed_gap > actor_gap {
++            let key = (lo, hi);
++            let entry = pair_min_gap.entry(key).or_insert(actor_gap);
++            *entry = entry.max(needed_gap);
++        }
++    }
++
+     // Add consistent margins to center the diagram
+     let margin = 8.0;
+     let mut cursor_x = margin;
+-    for id in &participants {
++    for (pos, id) in participants.iter().enumerate() {
+         let node = graph.nodes.get(id).expect("participant missing");
+         let actor_width = participant_widths
+             .get(id)
+@@ -101,7 +159,13 @@ pub(super) fn compute_sequence_layout(
+                 icon: None,
+             },
+         );
+-        cursor_x += actor_width + actor_gap;
++        let gap = if pos + 1 < participants.len() {
++            let key = (pos, pos + 1);
++            pair_min_gap.get(&key).copied().unwrap_or(actor_gap)
++        } else {
++            actor_gap
++        };
++        cursor_x += actor_width + gap;
+     }
+ 
+     let base_spacing = (theme.font_size * 2.1).max(18.0);
+-- 
+2.53.0
+
