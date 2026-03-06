@@ -48,3 +48,29 @@ sequenceDiagram
     Database-->>Server: Confirm
     Server-->>Client: Success
 ```
+
+#mermaid(
+  ```
+  mindmap
+    root((mindmap))
+      1
+      2
+      3
+      4
+      5
+      6
+      7
+      8
+      9
+      10
+      11
+  ```.text,
+  layout: (
+    mindmap: (
+      root_fill: "red",
+      section_label_colors: (
+        "red",
+      ),
+    ),
+  ),
+)
