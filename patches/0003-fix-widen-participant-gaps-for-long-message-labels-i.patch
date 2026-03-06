@@ -1,4 +1,4 @@
-From 81cad20ddfc6b447d9450dbd1106fab2b0cc7713 Mon Sep 17 00:00:00 2001
+From 9b23230bd1e83a4623fb2701483312ea7777f298 Mon Sep 17 00:00:00 2001
 From: hsgamer <huynhqtienvtag@gmail.com>
 Date: Sat, 21 Feb 2026 18:13:45 +0700
 Subject: [PATCH 3/3] fix: widen participant gaps for long message labels in
