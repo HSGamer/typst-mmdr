@@ -20,7 +20,7 @@ of here.
 Import the package and use the `mermaid` function:
 
 ```typst
-#import "@preview/mmdr:0.2.0": mermaid
+#import "@preview/mmdr:0.2.1": mermaid
 
 #mermaid("graph TD; A-->B;")
 ```
@@ -61,7 +61,7 @@ parameters.
 If you need the raw SVG string instead of a Typst image, use `mermaid-svg`:
 
 ```typst
-#import "@preview/mmdr:0.2.0": mermaid-svg
+#import "@preview/mmdr:0.2.1": mermaid-svg
 
 #let svg-code = mermaid-svg("graph TD; A-->B;")
 ```
@@ -77,7 +77,7 @@ To build the plugin and prepare it for distribution:
    ```
 3. Run the build script:
    ```sh
-   ./build.sh
+   just build
    ```
 
 The build artifacts will be available in `dist/`.
