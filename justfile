@@ -72,36 +72,73 @@ interactive-apply:
     fi
     PATCHES=("{{ patches }}"/*.patch)
     TOTAL=${#PATCHES[@]}
-    echo "Applying $TOTAL patch(es) interactively..."
+    echo "Processing $TOTAL patch(es) interactively..."
     echo ""
     cd "{{ clone_dir }}"
+    APPLY_ALL=0
     for i in "${!PATCHES[@]}"; do
         PATCH="../${PATCHES[$i]}"
         PATCH_NAME=$(basename "${PATCHES[$i]}")
-        echo "[$((i + 1))/$TOTAL] Applying $PATCH_NAME..."
+        
+        if [ "$APPLY_ALL" -eq 0 ]; then
+            echo ""
+            echo "[$((i + 1))/$TOTAL] Next patch: $PATCH_NAME"
+            read -r -p "Options: [n]ext, [a]ll, [s]kip, [q]uit? " ACTION
+            case "$ACTION" in
+                a*) APPLY_ALL=1 ;;
+                s*) echo "Skipping $PATCH_NAME."; continue ;;
+                q*) echo "Quitting."; exit 0 ;;
+                n*) ;;
+                *) echo "Invalid option. Defaulting to 'next'." ;;
+            esac
+        fi
+
+        echo "Applying $PATCH_NAME..."
         if git am "$PATCH" 2>/dev/null; then
             echo "  ✓ Applied successfully."
+            if [ "$APPLY_ALL" -eq 0 ]; then
+                read -r -p "  [a]mend with manual changes or [c]ontinue? " POST_ACTION
+                if [[ "$POST_ACTION" == a* ]]; then
+                    echo "  Make your changes in {{ clone_dir }}/"
+                    echo "  Once finished, press Enter to review and amend."
+                    read -r
+                    echo "  Changes staged for amending:"
+                    git add -A
+                    git status --short
+                    read -r -p "  Confirm amend? [y/N] " CONFIRM
+                    if [[ "$CONFIRM" == y* ]]; then
+                        git commit --amend --no-edit
+                        echo "  ✓ Patch amended."
+                    else
+                        echo "  ! Amend cancelled (changes remain in working tree)."
+                    fi
+                fi
+            fi
         else
             echo ""
             echo "  ✗ CONFLICT while applying $PATCH_NAME"
-            echo "  Fix the conflicts in {{ clone_dir }}/, then:"
-            echo "    1. Stage your fixes:  cd {{ clone_dir }} && git add -A"
-            echo "    2. Press Enter here to continue"
+            echo "  Fix the conflicts in {{ clone_dir }}/"
             echo ""
-            read -r -p "  Press Enter when resolved (or 'skip' to skip, 'abort' to abort)... " ACTION
+            read -r -p "Options: [r]esolved, [s]kip, [a]bort? " ACTION
             case "$ACTION" in
-                skip)
+                r*)
+                    git add -A
+                    git am --continue --no-edit
+                    echo "  ✓ Conflict resolved, patch applied."
+                    ;;
+                s*)
                     echo "  Skipping patch."
                     git am --skip
                     ;;
-                abort)
+                a*)
                     echo "  Aborting."
                     git am --abort
                     exit 1
                     ;;
                 *)
-                    git am --continue
-                    echo "  ✓ Conflict resolved, patch applied."
+                    echo "  Invalid option. Defaulting to abort."
+                    git am --abort
+                    exit 1
                     ;;
             esac
         fi

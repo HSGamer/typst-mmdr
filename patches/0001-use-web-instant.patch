@@ -1,4 +1,4 @@
-From 12b97aeb027c4a92a8999bd369fabae2d9db59ea Mon Sep 17 00:00:00 2001
+From 5bc70d321643df9a3ca55b8970391e4b85a369af Mon Sep 17 00:00:00 2001
 From: hsgamer <huynhqtienvtag@gmail.com>
 Date: Sun, 8 Mar 2026 23:18:17 +0700
 Subject: [PATCH 1/2] use web-instant
@@ -6,9 +6,9 @@ Subject: [PATCH 1/2] use web-instant
 ---
  Cargo.lock        | 9 +++++++++
  Cargo.toml        | 1 +
- src/layout/mod.rs | 3 ++-
+ src/layout/mod.rs | 2 +-
  src/lib.rs        | 2 +-
- 4 files changed, 13 insertions(+), 2 deletions(-)
+ 4 files changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
 index 13f9795..f8519cc 100644
@@ -43,15 +43,14 @@ index 23318c3..f242048 100644
  [dev-dependencies]
  criterion = "0.8"
 diff --git a/src/layout/mod.rs b/src/layout/mod.rs
-index 44e533a..e50057c 100644
+index 44e533a..efc0609 100644
 --- a/src/layout/mod.rs
 +++ b/src/layout/mod.rs
-@@ -48,7 +48,8 @@ use crate::text_metrics;
+@@ -48,7 +48,7 @@ use crate::text_metrics;
  use crate::theme::{Theme, adjust_color, parse_color_to_hsl};
  use std::cmp::Ordering;
  use std::collections::{BTreeMap, HashMap, HashSet};
 -use std::time::Instant;
-+
 +use instant::Instant;
  
  // Label placement padding (resolved per diagram kind).
