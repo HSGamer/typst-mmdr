@@ -1,6 +1,6 @@
 # ===== Configuration =====
 repo_url      := "https://github.com/1jehuang/mermaid-rs-renderer"
-commit        := "588fb9b01f08c5c77a24bfbf56394a0f2a18e4e7"
+commit        := "39fd42804b9012eb9d65e2f83781dac6651b5122"
 clone_dir     := "mermaid-rs-renderer"
 patches       := "patches"
 name          := `grep '^name' typst.toml | cut -d'"' -f2`

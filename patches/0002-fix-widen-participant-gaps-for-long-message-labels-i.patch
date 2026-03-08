@@ -1,7 +1,7 @@
-From 9b23230bd1e83a4623fb2701483312ea7777f298 Mon Sep 17 00:00:00 2001
+From f62c65839b936980d697893ea12f9e7d10e76836 Mon Sep 17 00:00:00 2001
 From: hsgamer <huynhqtienvtag@gmail.com>
 Date: Sat, 21 Feb 2026 18:13:45 +0700
-Subject: [PATCH 3/3] fix: widen participant gaps for long message labels in
+Subject: [PATCH 2/2] fix: widen participant gaps for long message labels in
  sequence diagrams
 
 ---
