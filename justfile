@@ -159,7 +159,9 @@ rebuild-patches:
 # Build WASM, package into dist/
 build:
     @echo "Building WASM..."
-    cargo build --release --target wasm32-unknown-unknown
+    RUSTFLAGS="-C target-feature=-reference-types" cargo build --release --target wasm32-unknown-unknown
+    @echo "Optimizing WASM..."
+    wasm-opt --enable-bulk-memory --enable-nontrapping-float-to-int --enable-sign-ext -Oz --strip-debug target/wasm32-unknown-unknown/release/typst_mmdr.wasm -o target/wasm32-unknown-unknown/release/typst_mmdr.wasm
     @mkdir -p {{ dist_dir }}
     @echo "Copying files to {{ dist_dir }}..."
     cp typst.toml {{ dist_dir }}/
