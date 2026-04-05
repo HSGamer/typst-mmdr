@@ -1,22 +1,23 @@
-From 5bc70d321643df9a3ca55b8970391e4b85a369af Mon Sep 17 00:00:00 2001
+From 0f515cee869ffff8844b0c64aabfcbe786074ec5 Mon Sep 17 00:00:00 2001
 From: hsgamer <huynhqtienvtag@gmail.com>
-Date: Sun, 8 Mar 2026 23:18:17 +0700
+Date: Sun, 5 Apr 2026 18:36:16 +0700
 Subject: [PATCH 1/2] use web-instant
 
 ---
- Cargo.lock        | 9 +++++++++
- Cargo.toml        | 1 +
- src/layout/mod.rs | 2 +-
- src/lib.rs        | 2 +-
- 4 files changed, 12 insertions(+), 2 deletions(-)
+ Cargo.lock        | 10 ++++++++++
+ Cargo.toml        |  1 +
+ src/cli.rs        |  6 +++---
+ src/layout/mod.rs |  2 +-
+ src/lib.rs        |  2 +-
+ 5 files changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 13f9795..f8519cc 100644
+index 88dcdb4..524fe48 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -445,6 +445,15 @@ version = "0.14.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "09e54e57b4c48b40f7aec75635392b12b3421fa26fe8b4332e63138ed278459c"
+@@ -467,6 +467,15 @@ dependencies = [
+  "hashbrown",
+ ]
  
 +[[package]]
 +name = "instant"
@@ -30,11 +31,19 @@ index 13f9795..f8519cc 100644
  [[package]]
  name = "is_terminal_polyfill"
  version = "1.70.2"
+@@ -560,6 +569,7 @@ dependencies = [
+  "clap",
+  "criterion",
+  "fontdb",
++ "instant",
+  "json5",
+  "once_cell",
+  "regex",
 diff --git a/Cargo.toml b/Cargo.toml
-index 23318c3..f242048 100644
+index f0e5eb2..563ab1e 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -41,6 +41,7 @@ fontdb = "0.23"
+@@ -42,6 +42,7 @@ fontdb = "0.23"
  ttf-parser = "0.25"
  resvg = { version = "0.46", optional = true }
  usvg = { version = "0.46", optional = true }
@@ -42,11 +51,42 @@ index 23318c3..f242048 100644
  
  [dev-dependencies]
  criterion = "0.8"
+diff --git a/src/cli.rs b/src/cli.rs
+index 63ae95d..8bee7ab 100644
+--- a/src/cli.rs
++++ b/src/cli.rs
+@@ -185,7 +185,7 @@ pub fn run() -> Result<()> {
+     };
+ 
+     if diagrams.len() == 1 {
+-        let t_parse_start = std::time::Instant::now();
++        let t_parse_start = instant::Instant::now();
+         let parsed = parse_mermaid(&diagrams[0])?;
+         let parse_us = t_parse_start.elapsed().as_micros();
+ 
+@@ -194,7 +194,7 @@ pub fn run() -> Result<()> {
+             config = merge_init_config(config, init_cfg);
+         }
+ 
+-        let t_layout_start = std::time::Instant::now();
++        let t_layout_start = instant::Instant::now();
+         let (layout, layout_stages) =
+             compute_layout_with_metrics(&parsed.graph, &config.theme, &config.layout);
+         let layout_us = t_layout_start.elapsed().as_micros();
+@@ -205,7 +205,7 @@ pub fn run() -> Result<()> {
+             write_layout_dump(path, &layout, &parsed.graph)?;
+         }
+ 
+-        let t_render_start = std::time::Instant::now();
++        let t_render_start = instant::Instant::now();
+         let svg = render_svg(&layout, &config.theme, &config.layout);
+         let render_us = t_render_start.elapsed().as_micros();
+ 
 diff --git a/src/layout/mod.rs b/src/layout/mod.rs
-index 44e533a..efc0609 100644
+index 161bba2..9a253ba 100644
 --- a/src/layout/mod.rs
 +++ b/src/layout/mod.rs
-@@ -48,7 +48,7 @@ use crate::text_metrics;
+@@ -54,7 +54,7 @@ use crate::text_metrics;
  use crate::theme::{Theme, adjust_color, parse_color_to_hsl};
  use std::cmp::Ordering;
  use std::collections::{BTreeMap, HashMap, HashSet};
@@ -56,10 +96,10 @@ index 44e533a..efc0609 100644
  // Label placement padding (resolved per diagram kind).
  const LABEL_RANK_FONT_SCALE: f32 = 0.5;
 diff --git a/src/lib.rs b/src/lib.rs
-index c1d00a9..7b5aa4a 100644
+index ab4a2da..63dd9d7 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -306,7 +306,7 @@ pub fn render_with_detailed_timing(
+@@ -307,7 +307,7 @@ pub fn render_with_detailed_timing(
      input: &str,
      options: RenderOptions,
  ) -> anyhow::Result<RenderDetailedResult> {

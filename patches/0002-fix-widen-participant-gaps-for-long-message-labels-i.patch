@@ -1,6 +1,6 @@
-From d770b2708e44aaf17f5f9cb5a84361f17f316083 Mon Sep 17 00:00:00 2001
+From 659f77d6f9ef95da279dface7a6aaec3cb8d6681 Mon Sep 17 00:00:00 2001
 From: hsgamer <huynhqtienvtag@gmail.com>
-Date: Sat, 21 Feb 2026 18:13:45 +0700
+Date: Sun, 5 Apr 2026 18:41:29 +0700
 Subject: [PATCH 2/2] fix: widen participant gaps for long message labels in
  sequence diagrams
 
@@ -9,7 +9,7 @@ Subject: [PATCH 2/2] fix: widen participant gaps for long message labels in
  1 file changed, 66 insertions(+), 2 deletions(-)
 
 diff --git a/src/layout/sequence.rs b/src/layout/sequence.rs
-index 55e1819..2a9c32a 100644
+index a1505f5..c4dbeea 100644
 --- a/src/layout/sequence.rs
 +++ b/src/layout/sequence.rs
 @@ -70,10 +70,68 @@ pub(super) fn compute_sequence_layout(
@@ -82,8 +82,8 @@ index 55e1819..2a9c32a 100644
          let node = graph.nodes.get(id).expect("participant missing");
          let actor_width = participant_widths
              .get(id)
-@@ -101,7 +159,13 @@ pub(super) fn compute_sequence_layout(
-                 icon: None,
+@@ -106,7 +164,13 @@ pub(super) fn compute_sequence_layout(
+                 is_treemap_leaf: false,
              },
          );
 -        cursor_x += actor_width + actor_gap;
