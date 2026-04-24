@@ -1,6 +1,6 @@
 # ===== Configuration =====
 repo_url      := "https://github.com/1jehuang/mermaid-rs-renderer"
-commit        := "39fd42804b9012eb9d65e2f83781dac6651b5122"
+commit        := "7db87acf21bfdfa34a45c80e179104e394f5feb1"
 clone_dir     := "mermaid-rs-renderer"
 patches       := "patches"
 name          := `grep '^name' typst.toml | cut -d'"' -f2`
@@ -123,7 +123,7 @@ interactive-apply:
             case "$ACTION" in
                 r*)
                     git add -A
-                    git am --continue --no-edit
+                    git am --continue
                     echo "  ✓ Conflict resolved, patch applied."
                     ;;
                 s*)

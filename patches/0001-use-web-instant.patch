@@ -1,17 +1,18 @@
-From 5bc70d321643df9a3ca55b8970391e4b85a369af Mon Sep 17 00:00:00 2001
+From 12047ff97526301bf300928124cdfa11553c2e80 Mon Sep 17 00:00:00 2001
 From: hsgamer <huynhqtienvtag@gmail.com>
 Date: Sun, 8 Mar 2026 23:18:17 +0700
 Subject: [PATCH 1/2] use web-instant
 
 ---
- Cargo.lock        | 9 +++++++++
- Cargo.toml        | 1 +
- src/layout/mod.rs | 2 +-
- src/lib.rs        | 2 +-
- 4 files changed, 12 insertions(+), 2 deletions(-)
+ Cargo.lock                            | 10 ++++++++++
+ Cargo.toml                            |  1 +
+ src/layout/flowchart/edge_pipeline.rs |  2 +-
+ src/layout/mod.rs                     |  2 +-
+ src/lib.rs                            |  2 +-
+ 5 files changed, 14 insertions(+), 3 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 13f9795..f8519cc 100644
+index 2ba2a4f..1d314a6 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
 @@ -445,6 +445,15 @@ version = "0.14.0"
@@ -30,8 +31,16 @@ index 13f9795..f8519cc 100644
  [[package]]
  name = "is_terminal_polyfill"
  version = "1.70.2"
+@@ -538,6 +547,7 @@ dependencies = [
+  "clap",
+  "criterion",
+  "fontdb",
++ "instant",
+  "json5",
+  "once_cell",
+  "regex",
 diff --git a/Cargo.toml b/Cargo.toml
-index 23318c3..f242048 100644
+index e8d954c..7236718 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
 @@ -41,6 +41,7 @@ fontdb = "0.23"
@@ -42,11 +51,23 @@ index 23318c3..f242048 100644
  
  [dev-dependencies]
  criterion = "0.8"
+diff --git a/src/layout/flowchart/edge_pipeline.rs b/src/layout/flowchart/edge_pipeline.rs
+index 0a41f6c..e43e497 100644
+--- a/src/layout/flowchart/edge_pipeline.rs
++++ b/src/layout/flowchart/edge_pipeline.rs
+@@ -1,6 +1,6 @@
+ use std::cmp::Ordering;
+ use std::collections::{BTreeMap, HashMap};
+-use std::time::Instant;
++use instant::Instant;
+ 
+ use crate::config::LayoutConfig;
+ use crate::ir::{DiagramKind, Graph};
 diff --git a/src/layout/mod.rs b/src/layout/mod.rs
-index 44e533a..efc0609 100644
+index 04f74b4..9379f20 100644
 --- a/src/layout/mod.rs
 +++ b/src/layout/mod.rs
-@@ -48,7 +48,7 @@ use crate::text_metrics;
+@@ -50,7 +50,7 @@ use crate::text_metrics;
  use crate::theme::{Theme, adjust_color, parse_color_to_hsl};
  use std::cmp::Ordering;
  use std::collections::{BTreeMap, HashMap, HashSet};
@@ -54,9 +75,9 @@ index 44e533a..efc0609 100644
 +use instant::Instant;
  
  // Label placement padding (resolved per diagram kind).
- const LABEL_RANK_FONT_SCALE: f32 = 0.5;
+ // Minimum padding around the entire layout bounding box.
 diff --git a/src/lib.rs b/src/lib.rs
-index c1d00a9..7b5aa4a 100644
+index 88aab75..113fc91 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -306,7 +306,7 @@ pub fn render_with_detailed_timing(
@@ -69,5 +90,5 @@ index c1d00a9..7b5aa4a 100644
      let t0 = Instant::now();
      let parsed = parse_mermaid(input)?;
 -- 
-2.53.0
+2.54.0
 
